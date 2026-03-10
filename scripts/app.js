@@ -10,13 +10,17 @@ const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: 'red' })
 
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
+
 // console.log(cubeMesh)
 
 // cubeMesh.position.x = 1
 // cubeMesh.position.y = 1
 // cubeMesh.position.z = -1
 
-cubeMesh.position.set(1, 0.5, 1)
+// cubeMesh.position.set(1, 0.5, 1)
+
+const tempVector = new THREE.Vector3(1, 0.5, 1)
+cubeMesh.position.copy(tempVector)
 
 // цвета для обозначения позиционирования по осям:
 // x - красный
@@ -69,6 +73,9 @@ const animate = () => {
   controls.update()
   renderer.render(scene, camera)
   window.requestAnimationFrame(animate)
+
+  // cubeMesh.scale.y += 0.00001
+  camera.updateProjectionMatrix()
 }
 
 animate()
