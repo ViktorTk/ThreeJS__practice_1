@@ -19,8 +19,34 @@ const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
 
 // cubeMesh.position.set(1, 0.5, 1)
 
-const tempVector = new THREE.Vector3(1, 0.5, 1)
-cubeMesh.position.copy(tempVector)
+// const tempVector = new THREE.Vector3(0, 0.25, 0)
+// cubeMesh.position.copy(tempVector)
+
+// cubeMesh.scale.set(1, 1.5, 1)
+// cubeMesh.updateMatrix()
+
+const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial)
+cubeMesh2.position.x = 2
+// cubeMesh2.scale.x = 0.5
+// cubeMesh2.scale.y = 0.5
+// cubeMesh2.scale.z = 0.5
+
+// cubeMesh2.scale.set(0.5, 0.5, 0.5)
+
+cubeMesh2.scale.setScalar(0.5)
+
+const cubeMesh3 = new THREE.Mesh(cubeGeometry, cubeMaterial)
+cubeMesh3.position.x = -2
+cubeMesh3.scale.setScalar(1.25)
+
+const sceneGroup = new THREE.Group()
+
+sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
+
+scene.add(sceneGroup)
+
+sceneGroup.scale.y = 3
+// sceneGroup.scale.setScalar(1.25)
 
 // цвета для обозначения позиционирования по осям:
 // x - красный
@@ -35,8 +61,6 @@ const gridHelper = new THREE.GridHelper(10, 10)
 // console.log(gridHelper)
 gridHelper.position.set(0.5, 0, 0.5)
 scene.add(gridHelper)
-
-scene.add(cubeMesh)
 
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -74,7 +98,6 @@ const animate = () => {
   renderer.render(scene, camera)
   window.requestAnimationFrame(animate)
 
-  // cubeMesh.scale.y += 0.00001
   camera.updateProjectionMatrix()
 }
 
@@ -86,3 +109,5 @@ window.addEventListener('resize', () => {
 
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
+
+// закончил 9 урок
