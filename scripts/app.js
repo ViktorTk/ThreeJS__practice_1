@@ -6,8 +6,13 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 const scene = new THREE.Scene()
 // console.log(scene)
 
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
-const cubeMaterial = new THREE.MeshBasicMaterial({ color: 'red' })
+const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 25, 25, 25)
+const cubeMaterial = new THREE.MeshBasicMaterial({ color: '#519aba' })
+
+const cubeMaterial2 = new THREE.MeshBasicMaterial({
+  color: '#234223',
+  wireframe: true,
+})
 
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
 
@@ -35,9 +40,10 @@ cubeMesh2.position.x = 2
 
 cubeMesh2.scale.setScalar(0.5)
 
-const cubeMesh3 = new THREE.Mesh(cubeGeometry, cubeMaterial)
+const cubeMesh3 = new THREE.Mesh(cubeGeometry, cubeMaterial2)
 cubeMesh3.position.x = -2
 cubeMesh3.scale.setScalar(1.25)
+cubeMesh3.rotation.y = 0.75
 
 const sceneGroup = new THREE.Group()
 
@@ -45,8 +51,10 @@ sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
 
 scene.add(sceneGroup)
 
-sceneGroup.scale.y = 3
+// sceneGroup.scale.y = 3
 // sceneGroup.scale.setScalar(1.25)
+// sceneGroup.rotation.y = Math.PI * -0.25
+sceneGroup.rotation.y = THREE.MathUtils.degToRad(45)
 
 // цвета для обозначения позиционирования по осям:
 // x - красный
@@ -110,4 +118,4 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
-// закончил 9 урок
+
