@@ -1,12 +1,13 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
-// console.log(THREE)
-
+// сцена
 const scene = new THREE.Scene()
-// console.log(scene)
 
+// геометрия и грани по x/y/z
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 25, 25, 25)
+
+// материалы
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: '#519aba' })
 
 const cubeMaterial2 = new THREE.MeshBasicMaterial({
@@ -14,46 +15,33 @@ const cubeMaterial2 = new THREE.MeshBasicMaterial({
   wireframe: true,
 })
 
+// объекты с геометрией и материалом
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
 
-// console.log(cubeMesh)
-
-// cubeMesh.position.x = 1
-// cubeMesh.position.y = 1
-// cubeMesh.position.z = -1
-
-// cubeMesh.position.set(1, 0.5, 1)
-
-// const tempVector = new THREE.Vector3(0, 0.25, 0)
-// cubeMesh.position.copy(tempVector)
-
-// cubeMesh.scale.set(1, 1.5, 1)
-// cubeMesh.updateMatrix()
-
 const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial)
+// позиционка и скалирование
 cubeMesh2.position.x = 2
-// cubeMesh2.scale.x = 0.5
-// cubeMesh2.scale.y = 0.5
-// cubeMesh2.scale.z = 0.5
-
-// cubeMesh2.scale.set(0.5, 0.5, 0.5)
-
 cubeMesh2.scale.setScalar(0.5)
 
 const cubeMesh3 = new THREE.Mesh(cubeGeometry, cubeMaterial2)
 cubeMesh3.position.x = -2
 cubeMesh3.scale.setScalar(1.25)
+// поворот по оси "y"
 cubeMesh3.rotation.y = 0.75
 
+// const geometry = new THREE.CapsuleGeometry(0.5, 1, 32, 64)
+const geometry = new THREE.SphereGeometry(0.75, 64, 64)
+const geometryMesh = new THREE.Mesh(geometry, cubeMaterial2)
+
+// группа объектов сцены
 const sceneGroup = new THREE.Group()
+// sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
+sceneGroup.add(geometryMesh, cubeMesh2, cubeMesh3)
 
-sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
-
+// добавление группы в сцену
 scene.add(sceneGroup)
 
-// sceneGroup.scale.y = 3
-// sceneGroup.scale.setScalar(1.25)
-// sceneGroup.rotation.y = Math.PI * -0.25
+// поворот всей группы по оси "y" в градусах
 sceneGroup.rotation.y = THREE.MathUtils.degToRad(45)
 
 // цвета для обозначения позиционирования по осям:
@@ -61,15 +49,16 @@ sceneGroup.rotation.y = THREE.MathUtils.degToRad(45)
 // y - зеленый
 // z - синий
 
+// добавили оси на сцену
 const axesHelper = new THREE.AxesHelper(5)
-// console.log(axesHelper)
 scene.add(axesHelper)
 
+// добавили сетку на сцену
 const gridHelper = new THREE.GridHelper(10, 10)
-// console.log(gridHelper)
 gridHelper.position.set(0.5, 0, 0.5)
 scene.add(gridHelper)
 
+// настройки камеры
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -77,12 +66,13 @@ const camera = new THREE.PerspectiveCamera(
   30,
 )
 
-camera.position.z = 2
-
-// console.log(camera);
+camera.position.x = 2
+camera.position.y = 2
+camera.position.z = 2.5
 
 scene.add(camera)
 
+// нахождение элемента "canvas" в html-документе
 const canvas = document.querySelector('.threejs')
 
 const renderer = new THREE.WebGLRenderer({
@@ -97,25 +87,30 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
-// controls.autoRotate = true
 
-// console.log(controls);
+// выравнивание анимации независимо от FPS
+const clock = new THREE.Clock()
 
+// цикличная функция ререндера
 const animate = () => {
+  const elapsedTime = clock.getElapsedTime()
+
   controls.update()
   renderer.render(scene, camera)
   window.requestAnimationFrame(animate)
-
   camera.updateProjectionMatrix()
+
+  // частота вращения - зависит от FPS экрана, потому желательно использовать другой вариант, чтобы скорость воспроизведения анимации была одинаковая независимо от FPS (через clock)
+  // sceneGroup.rotation.y += THREE.MathUtils.degToRad(0.25)
 }
 
 animate()
 
+// изменение размера канваса при изменении ширины/высоты окна браузера
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
 
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
-
 
