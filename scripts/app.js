@@ -1,13 +1,13 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 
-// сцена
+// // сцена
 const scene = new THREE.Scene()
 
-// геометрия и грани по x/y/z
+// // геометрия и грани по x/y/z
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1, 25, 25, 25)
 
-// материалы
+// // материалы
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: '#519aba' })
 
 const cubeMaterial2 = new THREE.MeshBasicMaterial({
@@ -15,11 +15,18 @@ const cubeMaterial2 = new THREE.MeshBasicMaterial({
   wireframe: true,
 })
 
-// объекты с геометрией и материалом
+// MeshBasicMaterial - не реагирует на освещение, MeshLambertMaterial - зависит от освещения
+const material = new THREE.MeshLambertMaterial({
+  color: 'limeGreen',
+  transparent: true,
+  opacity: 0.5,
+})
+
+// // объекты с геометрией и материалом
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
 
 const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial)
-// позиционка и скалирование
+// // позиционка и скалирование
 cubeMesh2.position.x = 2
 cubeMesh2.scale.setScalar(0.5)
 
@@ -31,34 +38,48 @@ cubeMesh3.rotation.y = 0.75
 
 // const geometry = new THREE.CapsuleGeometry(0.5, 1, 32, 64)
 const geometry = new THREE.SphereGeometry(0.75, 64, 64)
-const geometryMesh = new THREE.Mesh(geometry, cubeMaterial2)
+const geometryMesh = new THREE.Mesh(geometry, material)
 
-// группа объектов сцены
+// // группа объектов сцены
 const sceneGroup = new THREE.Group()
 // sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
 sceneGroup.add(geometryMesh, cubeMesh2, cubeMesh3)
 
-// добавление группы в сцену
+// // добавление группы на сцену
 scene.add(sceneGroup)
 
-// поворот всей группы по оси "y" в градусах
+// // поворот всей группы по оси "y" в градусах
 sceneGroup.rotation.y = THREE.MathUtils.degToRad(45)
 
-// цвета для обозначения позиционирования по осям:
+// // туман
+const fog = new THREE.Fog('#000', 2, 4)
+scene.fog = fog
+
+// // освещение
+// AmbientLight - равномерно освещает объекты сцены, не создает теней и бликов, имитирует фоновое освещение
+const light = new THREE.AmbientLight('#fff', 0.15)
+scene.add(light)
+
+// PointLight - точечный исочник света, светит во все направления, создает тени и блики, имеет параметры затухания с расстоянием
+const pointLight = new THREE.PointLight('#fff', 4)
+pointLight.position.set(1, 1, 0)
+scene.add(pointLight)
+
+// // цвета для обозначения позиционирования по осям:
 // x - красный
 // y - зеленый
 // z - синий
 
-// добавили оси на сцену
+// // добавили оси на сцену
 const axesHelper = new THREE.AxesHelper(5)
 scene.add(axesHelper)
 
-// добавили сетку на сцену
+// // добавили сетку на сцену
 const gridHelper = new THREE.GridHelper(10, 10)
 gridHelper.position.set(0.5, 0, 0.5)
 scene.add(gridHelper)
 
-// настройки камеры
+// // настройки камеры
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -72,7 +93,7 @@ camera.position.z = 2.5
 
 scene.add(camera)
 
-// нахождение элемента "canvas" в html-документе
+// // нахождение элемента "canvas" в html-документе
 const canvas = document.querySelector('.threejs')
 
 const renderer = new THREE.WebGLRenderer({
@@ -88,10 +109,10 @@ renderer.setSize(window.innerWidth, window.innerHeight)
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 
-// выравнивание анимации независимо от FPS
+// // выравнивание анимации независимо от FPS
 const clock = new THREE.Clock()
 
-// цикличная функция ререндера
+// // цикличная функция ререндера
 const animate = () => {
   const elapsedTime = clock.getElapsedTime()
 
@@ -106,11 +127,10 @@ const animate = () => {
 
 animate()
 
-// изменение размера канваса при изменении ширины/высоты окна браузера
+// // изменение размера канваса при изменении ширины/высоты окна браузера
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
 
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
-
