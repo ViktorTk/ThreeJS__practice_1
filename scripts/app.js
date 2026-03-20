@@ -18,8 +18,8 @@ const cubeMaterial2 = new THREE.MeshBasicMaterial({
 // MeshBasicMaterial - не реагирует на освещение, MeshLambertMaterial - зависит от освещения
 const material = new THREE.MeshLambertMaterial({
   color: 'limeGreen',
-  transparent: true,
-  opacity: 0.5,
+  // transparent: true,
+  // opacity: 0.5,
 })
 
 // // объекты с геометрией и материалом
@@ -37,7 +37,7 @@ cubeMesh3.scale.setScalar(1.25)
 cubeMesh3.rotation.y = 0.75
 
 // const geometry = new THREE.CapsuleGeometry(0.5, 1, 32, 64)
-const geometry = new THREE.SphereGeometry(0.75, 64, 64)
+const geometry = new THREE.SphereGeometry(1, 64, 64)
 const geometryMesh = new THREE.Mesh(geometry, material)
 
 // // группа объектов сцены
@@ -62,8 +62,18 @@ scene.add(light)
 
 // PointLight - точечный исочник света, светит во все направления, создает тени и блики, имеет параметры затухания с расстоянием
 const pointLight = new THREE.PointLight('#fff', 4)
-pointLight.position.set(1, 1, 0)
+pointLight.position.set(1.8, 0.7, 0)
 scene.add(pointLight)
+
+// // Helper для pointLight
+const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.1)
+scene.add(pointLightHelper)
+
+// // меняем у пишем в консоль позицию pointLight
+// document.addEventListener('mousemove', (e) => {
+//   pointLight.position.set(e.pageX / 50, e.pageY / 50, 0)
+//   console.log(pointLight.position)
+// })
 
 // // цвета для обозначения позиционирования по осям:
 // x - красный
@@ -123,6 +133,8 @@ const animate = () => {
 
   // частота вращения - зависит от FPS экрана, потому желательно использовать другой вариант, чтобы скорость воспроизведения анимации была одинаковая независимо от FPS (через clock)
   // sceneGroup.rotation.y += THREE.MathUtils.degToRad(0.25)
+
+  // pointLight.position.z = Math.sin(elapsedTime * 1)
 }
 
 animate()
@@ -134,3 +146,6 @@ window.addEventListener('resize', () => {
 
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
+
+// // Финальная очистка
+// scene.remove(axesHelper, gridHelper, pointLightHelper)
