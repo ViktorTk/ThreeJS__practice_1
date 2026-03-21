@@ -1,5 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { Pane } from 'tweakpane'
+
+const devMode = true
 
 // // сцена
 const scene = new THREE.Scene()
@@ -16,19 +19,29 @@ const cubeMaterial2 = new THREE.MeshBasicMaterial({
 })
 
 // MeshBasicMaterial - не реагирует на освещение, MeshLambertMaterial - зависит от освещения
-const material = new THREE.MeshLambertMaterial({
+// const material = new THREE.MeshLambertMaterial({
+//   color: 'limeGreen',
+//   transparent: true,
+//   opacity: 0.5,
+// })
+
+// MeshPhongMaterial - материал с поверхностями, где нужны блики; подходит для пластика/металла и т.д.
+const material = new THREE.MeshPhongMaterial({
   color: 'limeGreen',
   // transparent: true,
-  // opacity: 0.5,
+  // opacity: 0.75,
 })
+// shininess - блеск материала
+material.shininess = 2000
 
 // // объекты с геометрией и материалом
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
 
-const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial)
+// const cubeMesh2 = new THREE.Mesh(cubeGeometry, cubeMaterial)
+const cubeMesh2 = new THREE.Mesh(cubeGeometry, material)
 // // позиционка и скалирование
 cubeMesh2.position.x = 2
-cubeMesh2.scale.setScalar(0.5)
+// cubeMesh2.scale.setScalar(0.75)
 
 const cubeMesh3 = new THREE.Mesh(cubeGeometry, cubeMaterial2)
 cubeMesh3.position.x = -2
@@ -40,10 +53,15 @@ cubeMesh3.rotation.y = 0.75
 const geometry = new THREE.SphereGeometry(1, 64, 64)
 const geometryMesh = new THREE.Mesh(geometry, material)
 
+const torusKnot = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16)
+const torusKnotMesh = new THREE.Mesh(torusKnot, material)
+torusKnotMesh.position.x = 2
+
 // // группа объектов сцены
 const sceneGroup = new THREE.Group()
 // sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
-sceneGroup.add(geometryMesh, cubeMesh2, cubeMesh3)
+// sceneGroup.add(geometryMesh, cubeMesh2, cubeMesh3)
+sceneGroup.add(geometryMesh, torusKnotMesh, cubeMesh3)
 
 // // добавление группы на сцену
 scene.add(sceneGroup)
@@ -147,5 +165,17 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
-// // Финальная очистка
-// scene.remove(axesHelper, gridHelper, pointLightHelper)
+// // Очистка от интструментов разработчика
+
+if (devMode) {
+  // // добавляем инструментарий для изменения параметров на клиенте
+  const pane = new Pane()
+  pane.addBinding(material, 'shininess', {
+    min: 0,
+    max: 4000,
+    step: 1,
+    label: 'Блики',
+  })
+} else {
+  scene.remove(axesHelper, gridHelper, pointLightHelper)
+}
