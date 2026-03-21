@@ -34,6 +34,12 @@ const material = new THREE.MeshPhongMaterial({
 // shininess - блеск материала
 material.shininess = 2000
 
+// MeshStandardMaterial - физически корректный материал
+const standardMaterial = new THREE.MeshStandardMaterial()
+standardMaterial.color = new THREE.Color('limeGreen')
+standardMaterial.roughness = 0
+standardMaterial.metalness = 0.65
+
 // // объекты с геометрией и материалом
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
 
@@ -54,14 +60,19 @@ const geometry = new THREE.SphereGeometry(1, 64, 64)
 const geometryMesh = new THREE.Mesh(geometry, material)
 
 const torusKnot = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16)
-const torusKnotMesh = new THREE.Mesh(torusKnot, material)
+// const torusKnotMesh = new THREE.Mesh(torusKnot, material)
+const torusKnotMesh = new THREE.Mesh(torusKnot, standardMaterial)
 torusKnotMesh.position.x = 2
+
+const sphereGeometry = new THREE.SphereGeometry(1, 32, 32)
+const sphereMesh = new THREE.Mesh(sphereGeometry, standardMaterial)
 
 // // группа объектов сцены
 const sceneGroup = new THREE.Group()
 // sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
 // sceneGroup.add(geometryMesh, cubeMesh2, cubeMesh3)
-sceneGroup.add(geometryMesh, torusKnotMesh, cubeMesh3)
+// sceneGroup.add(geometryMesh, torusKnotMesh, cubeMesh3)
+sceneGroup.add(sphereMesh, torusKnotMesh, cubeMesh3)
 
 // // добавление группы на сцену
 scene.add(sceneGroup)
@@ -170,11 +181,17 @@ window.addEventListener('resize', () => {
 if (devMode) {
   // // добавляем инструментарий для изменения параметров на клиенте
   const pane = new Pane()
-  pane.addBinding(material, 'shininess', {
+  // pane.addBinding(material, 'shininess', {
+  //   min: 0,
+  //   max: 4000,
+  // })
+  pane.addBinding(standardMaterial, 'metalness', {
     min: 0,
-    max: 4000,
-    step: 1,
-    label: 'Блики',
+    max: 1,
+  })
+  pane.addBinding(standardMaterial, 'roughness', {
+    min: 0,
+    max: 1,
   })
 } else {
   scene.remove(axesHelper, gridHelper, pointLightHelper)
