@@ -40,6 +40,17 @@ standardMaterial.color = new THREE.Color('limeGreen')
 standardMaterial.roughness = 0
 standardMaterial.metalness = 0.65
 
+// // Работа с текстурами
+// TextureLoader - ассинхронный загрузчик изображения, преобразует их в текстуры для материалов
+const textureLoader = new THREE.TextureLoader()
+
+const textureGrass = textureLoader.load(
+  '../textures/grass/wispy-grass-meadow_albedo.png',
+)
+
+const materialGrass = new THREE.MeshStandardMaterial()
+materialGrass.map = textureGrass
+
 // // объекты с геометрией и материалом
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
 
@@ -64,8 +75,9 @@ const torusKnot = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16)
 const torusKnotMesh = new THREE.Mesh(torusKnot, standardMaterial)
 torusKnotMesh.position.x = 2
 
-const sphereGeometry = new THREE.SphereGeometry(1, 32, 32)
-const sphereMesh = new THREE.Mesh(sphereGeometry, standardMaterial)
+const sphereGeometry = new THREE.SphereGeometry(1, 64, 64)
+// const sphereMesh = new THREE.Mesh(sphereGeometry, standardMaterial)
+const sphereMesh = new THREE.Mesh(sphereGeometry, materialGrass)
 
 // // группа объектов сцены
 const sceneGroup = new THREE.Group()
