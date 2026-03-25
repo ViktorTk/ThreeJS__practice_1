@@ -47,9 +47,33 @@ const textureLoader = new THREE.TextureLoader()
 const textureGrass = textureLoader.load(
   '../textures/grass/wispy-grass-meadow_albedo.png',
 )
+const textureGrassAO = textureLoader.load(
+  '../textures/grass/wispy-grass-meadow_ao.png',
+)
+const textureGrassHeight = textureLoader.load(
+  '../textures/grass/wispy-grass-meadow_height.png',
+)
+const textureGrassMetallic = textureLoader.load(
+  '../textures/grass/wispy-grass-meadow_metallic.png',
+)
+const textureGrassNormal = textureLoader.load(
+  '../textures/grass/wispy-grass-meadow_normal-ogl.png',
+)
+const textureGrassRoughness = textureLoader.load(
+  '../textures/grass/wispy-grass-meadow_roughness.png',
+)
 
+// создание материала и работа с картами текстур материала
 const materialGrass = new THREE.MeshStandardMaterial()
 materialGrass.map = textureGrass
+materialGrass.aoMap = textureGrassAO
+materialGrass.roughnessMap = textureGrassRoughness
+materialGrass.metalnessMap = textureGrassMetallic
+materialGrass.normalMap = textureGrassNormal
+materialGrass.displacementMap = textureGrassHeight
+
+materialGrass.displacementScale = 0.15
+materialGrass.roughness = 0.6
 
 // // объекты с геометрией и материалом
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
@@ -102,7 +126,7 @@ const light = new THREE.AmbientLight('#fff', 0.15)
 scene.add(light)
 
 // PointLight - точечный исочник света, светит во все направления, создает тени и блики, имеет параметры затухания с расстоянием
-const pointLight = new THREE.PointLight('#fff', 4)
+const pointLight = new THREE.PointLight('#fff', 2)
 pointLight.position.set(1.8, 0.7, 0)
 scene.add(pointLight)
 
