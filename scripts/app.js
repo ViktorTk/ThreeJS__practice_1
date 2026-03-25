@@ -162,6 +162,9 @@ const torusKnot = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16)
 // const torusKnotMesh = new THREE.Mesh(torusKnot, material)
 const torusKnotMesh = new THREE.Mesh(torusKnot, standardMaterial)
 torusKnotMesh.position.x = 2
+// работа с тенями (объект)
+torusKnotMesh.castShadow = true // Отбрасывает тень
+torusKnotMesh.receiveShadow = true // Принимает тень
 
 const sphereGeometry = new THREE.SphereGeometry(1, 64, 64)
 // const sphereMesh = new THREE.Mesh(sphereGeometry, standardMaterial)
@@ -194,6 +197,13 @@ scene.add(light)
 // PointLight - точечный исочник света, светит во все направления, создает тени и блики, имеет параметры затухания с расстоянием
 const pointLight = new THREE.PointLight('#fff', 2)
 pointLight.position.set(1.8, 0.7, 0)
+// работа с тенями  (источник освещения)
+pointLight.castShadow = true
+pointLight.shadow.mapSize.width = 2048
+pointLight.shadow.mapSize.height = 2048
+pointLight.shadow.camera.far = 10
+pointLight.shadow.radius = 25
+
 scene.add(pointLight)
 
 // // Helper для pointLight
@@ -245,7 +255,8 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.setSize(window.innerWidth, window.innerHeight)
 
-// console.log(renderer);
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFShadowMap
 
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
