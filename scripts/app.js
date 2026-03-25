@@ -41,9 +41,11 @@ standardMaterial.roughness = 0
 standardMaterial.metalness = 0.65
 
 // // Работа с текстурами
+// создание материала и работа с картами текстур материала
 // TextureLoader - ассинхронный загрузчик изображения, преобразует их в текстуры для материалов
 const textureLoader = new THREE.TextureLoader()
 
+// текстура травы
 const textureGrass = textureLoader.load(
   '../textures/grass/wispy-grass-meadow_albedo.png',
 )
@@ -63,7 +65,6 @@ const textureGrassRoughness = textureLoader.load(
   '../textures/grass/wispy-grass-meadow_roughness.png',
 )
 
-// создание материала и работа с картами текстур материала
 const materialGrass = new THREE.MeshStandardMaterial()
 materialGrass.map = textureGrass
 materialGrass.aoMap = textureGrassAO
@@ -74,6 +75,69 @@ materialGrass.displacementMap = textureGrassHeight
 
 materialGrass.displacementScale = 0.15
 materialGrass.roughness = 0.6
+
+// текстура камня
+const textureRocky = textureLoader.load(
+  '../textures/rocky/rocky-rugged-terrain_1_albedo.png',
+)
+const textureRockyAO = textureLoader.load(
+  '../textures/rocky/rocky-rugged-terrain_1_ao.png',
+)
+const textureRockyHeight = textureLoader.load(
+  '../textures/rocky/rocky-rugged-terrain_1_height.png',
+)
+const textureRockyMetallic = textureLoader.load(
+  '../textures/rocky/rocky-rugged-terrain_1_metallic.png',
+)
+const textureRockyNormal = textureLoader.load(
+  '../textures/rocky/rocky-rugged-terrain_1_normal-ogl.png',
+)
+const textureRockyRoughness = textureLoader.load(
+  '../textures/rocky/rocky-rugged-terrain_1_roughness.png',
+)
+
+const materialRocky = new THREE.MeshStandardMaterial()
+
+materialRocky.map = textureRocky
+materialRocky.aoMap = textureRockyAO
+materialRocky.roughnessMap = textureRockyRoughness
+materialRocky.metalnessMap = textureRockyMetallic
+materialRocky.normalMap = textureRockyNormal
+materialRocky.displacementMap = textureRockyHeight
+
+materialRocky.displacementScale = 0.125
+materialRocky.roughness = 0.45
+
+// текстура кирпича
+const textureBrick = textureLoader.load(
+  '../textures/brick/victorian-brick_albedo.png',
+)
+const textureBrickAO = textureLoader.load(
+  '../textures/brick/victorian-brick_ao.png',
+)
+const textureBrickHeight = textureLoader.load(
+  '../textures/brick/victorian-brick_height.png',
+)
+const textureBrickMetallic = textureLoader.load(
+  '../textures/brick/victorian-brick_metallic.png',
+)
+const textureBrickNormal = textureLoader.load(
+  '../textures/brick/victorian-brick_normal-ogl.png',
+)
+const textureBrickRoughness = textureLoader.load(
+  '../textures/brick/victorian-brick_roughness.png',
+)
+
+const materialBrick = new THREE.MeshStandardMaterial()
+materialBrick.map = textureBrick
+materialBrick.aoMap = textureBrickAO
+materialBrick.roughnessMap = textureBrickRoughness
+materialBrick.metalnessMap = textureBrickMetallic
+materialBrick.normalMap = textureBrickNormal
+materialBrick.displacementMap = textureBrickHeight
+
+materialBrick.displacementScale = 0.25
+materialBrick.roughness = 0.75
 
 // // объекты с геометрией и материалом
 const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
@@ -101,7 +165,9 @@ torusKnotMesh.position.x = 2
 
 const sphereGeometry = new THREE.SphereGeometry(1, 64, 64)
 // const sphereMesh = new THREE.Mesh(sphereGeometry, standardMaterial)
-const sphereMesh = new THREE.Mesh(sphereGeometry, materialGrass)
+// const sphereMesh = new THREE.Mesh(sphereGeometry, materialGrass)
+// const sphereMesh = new THREE.Mesh(sphereGeometry, materialRocky)
+const sphereMesh = new THREE.Mesh(sphereGeometry, materialBrick)
 
 // // группа объектов сцены
 const sceneGroup = new THREE.Group()
@@ -226,6 +292,14 @@ if (devMode) {
     max: 1,
   })
   pane.addBinding(standardMaterial, 'roughness', {
+    min: 0,
+    max: 1,
+  })
+  pane.addBinding(textureGrass, 'offset', {
+    x: { min: -1, max: 1 },
+    y: { min: -1, max: 1 },
+  })
+  pane.addBinding(materialBrick, 'roughness', {
     min: 0,
     max: 1,
   })
