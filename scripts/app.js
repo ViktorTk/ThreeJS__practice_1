@@ -264,35 +264,12 @@ controls.enableDamping = true
 // // выравнивание анимации независимо от FPS
 const clock = new THREE.Clock()
 
-// // цикличная функция ререндера
-const animate = () => {
-  const elapsedTime = clock.getElapsedTime()
-
-  controls.update()
-  renderer.render(scene, camera)
-  window.requestAnimationFrame(animate)
-  camera.updateProjectionMatrix()
-
-  // частота вращения - зависит от FPS экрана, потому желательно использовать другой вариант, чтобы скорость воспроизведения анимации была одинаковая независимо от FPS (через clock)
-  // sceneGroup.rotation.y += THREE.MathUtils.degToRad(0.25)
-
-  // pointLight.position.z = Math.sin(elapsedTime * 1)
-}
-
-animate()
-
-// // изменение размера канваса при изменении ширины/высоты окна браузера
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-
-  renderer.setSize(window.innerWidth, window.innerHeight)
-})
-
 // // Raycaster - способ взаимодействия с объектом на сцене
 const raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
 let isDraggingKnot = false
+let targetRotation = { x: 0, y: 0 }
+let displayRotation = { x: 0, y: 0 }
 
 canvas.addEventListener('mousedown', (e) => {
   if (e.button !== 0) return
@@ -314,9 +291,47 @@ canvas.addEventListener('mousemove', (e) => {
   controls.enabled = !isDraggingKnot
 
   if (isDraggingKnot && e.buttons === 1) {
-    torusKnotMesh.rotation.y += e.movementX * 0.01
-    torusKnotMesh.rotation.x += e.movementY * 0.01
+    targetRotation.y += e.movementX * 0.01
+    targetRotation.x += e.movementY * 0.01
   }
+})
+
+// // цикличная функция ререндера
+const animate = () => {
+  const elapsedTime = clock.getElapsedTime()
+
+  controls.update()
+  renderer.render(scene, camera)
+  window.requestAnimationFrame(animate)
+  camera.updateProjectionMatrix()
+
+  // частота вращения - зависит от FPS экрана, потому желательно использовать другой вариант, чтобы скорость воспроизведения анимации была одинаковая независимо от FPS (через clock)
+  // sceneGroup.rotation.y += THREE.MathUtils.degToRad(0.25)
+
+  // pointLight.position.z = Math.sin(elapsedTime * 1)
+
+  // Raycaster Smooth
+  displayRotation.x = THREE.MathUtils.lerp(
+    displayRotation.x,
+    targetRotation.x,
+    0.1,
+  )
+  displayRotation.y = THREE.MathUtils.lerp(
+    displayRotation.y,
+    targetRotation.y,
+    0.1,
+  )
+  torusKnotMesh.rotation.set(displayRotation.x, displayRotation.y, 0)
+}
+
+animate()
+
+// // изменение размера канваса при изменении ширины/высоты окна браузера
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight
+  camera.updateProjectionMatrix()
+
+  renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
 // // Очистка от интструментов разработчика
