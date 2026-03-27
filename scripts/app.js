@@ -289,6 +289,36 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
+// // Raycaster - способ взаимодействия с объектом на сцене
+const raycaster = new THREE.Raycaster()
+const mouse = new THREE.Vector2()
+let isDraggingKnot = false
+
+canvas.addEventListener('mousedown', (e) => {
+  if (e.button !== 0) return
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+  raycaster.setFromCamera(mouse, camera)
+  isDraggingKnot = raycaster.intersectObject(torusKnotMesh).length > 0
+})
+
+canvas.addEventListener('mouseup', () => {
+  isDraggingKnot = false
+})
+
+canvas.addEventListener('mousemove', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+  raycaster.setFromCamera(mouse, camera)
+
+  controls.enabled = !isDraggingKnot
+
+  if (isDraggingKnot && e.buttons === 1) {
+    torusKnotMesh.rotation.y += e.movementX * 0.01
+    torusKnotMesh.rotation.x += e.movementY * 0.01
+  }
+})
+
 // // Очистка от интструментов разработчика
 
 if (devMode) {
