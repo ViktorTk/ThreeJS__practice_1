@@ -172,6 +172,14 @@ const sphereGeometry = new THREE.SphereGeometry(1, 64, 64)
 // const sphereMesh = new THREE.Mesh(sphereGeometry, materialRocky)
 const sphereMesh = new THREE.Mesh(sphereGeometry, materialBrick)
 
+// // Отражения
+const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128)
+const cubeCamera = new THREE.CubeCamera(0.1, 60, cubeRenderTarget)
+cubeCamera.position.copy(torusKnotMesh.position)
+scene.add(cubeCamera)
+standardMaterial.envMap = cubeRenderTarget.texture
+standardMaterial.envMapIntensity = 0.5
+
 // // группа объектов сцены
 const sceneGroup = new THREE.Group()
 // sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
@@ -300,6 +308,12 @@ canvas.addEventListener('mousemove', (e) => {
 const animate = () => {
   const elapsedTime = clock.getElapsedTime()
 
+  // для отражений
+  torusKnotMesh.visible = false
+  cubeCamera.update(renderer, scene)
+  torusKnotMesh.visible = true
+  //
+
   controls.update()
   renderer.render(scene, camera)
   window.requestAnimationFrame(animate)
@@ -358,6 +372,10 @@ if (devMode) {
   pane.addBinding(materialBrick, 'roughness', {
     min: 0,
     max: 1,
+  })
+  pane.addBinding(standardMaterial, 'envMapIntensity', {
+    min: 0,
+    max: 2,
   })
 } else {
   scene.remove(axesHelper, gridHelper, pointLightHelper)
