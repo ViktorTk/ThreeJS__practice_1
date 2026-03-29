@@ -185,13 +185,19 @@ standardMaterial.envMapIntensity = 0.5
 // загрузка модели
 const loader = new GLTFLoader()
 
+let loadedBoulder = null
+
 loader.load('../textures/boulder/boulder.glb', (gltf) => {
   gltf.scene.traverse((node) => {
     if (node.isMesh) {
       node.material = boulderMaterial
+      node.castShadow = true
+      node.receiveShadow = true
+      // node.scale.setScalar(0.9)
     }
   })
-  scene.add(gltf.scene)
+  loadedBoulder = gltf.scene
+  scene.add(loadedBoulder)
 })
 
 // загрузка текстур
@@ -199,13 +205,38 @@ const textures = {
   boulderAlbedo: textureLoader.load(
     '../textures/boulder/sharp-boulder2-albedo.png',
   ),
+  boulderNormal: textureLoader.load(
+    '../textures/boulder/sharp-boulder2-normal_ogl.png',
+  ),
+  boulderRoughness: textureLoader.load(
+    '../textures/boulder/sharp-boulder2-roughness.png',
+  ),
+  boulderMetalness: textureLoader.load(
+    '../textures/boulder/sharp-boulder2-metallic.png',
+  ),
+  boulderAO: textureLoader.load('../textures/boulder/sharp-boulder2-ao.png'),
 }
-// инвертируем текстуру по оси Y
-textures.boulderAlbedo.flipY = false
+// инвертируем текстуры по оси Y (в ручную)
+// textures.boulderAlbedo.flipY = false
+// textures.boulderNormal.flipY = false
+// textures.boulderRoughness.flipY = false
+// textures.boulderMetalness.flipY = false
+// textures.boulderAO.flipY = false
+
+// инвертируем все текстуры по оси Y (централизованно)
+Object.values(textures).forEach((texture) => {
+  texture.flipY = false
+})
 
 // настройка материала
 const boulderMaterial = new THREE.MeshStandardMaterial({
   map: textures.boulderAlbedo,
+  normalMap: textures.boulderNormal,
+  roughnessMap: textures.boulderRoughness,
+  metalnessMap: textures.boulderMetalness,
+  aoMap: textures.boulderAO,
+
+  roughness: 0.65,
 })
 
 // // группа объектов сцены
@@ -304,7 +335,7 @@ const clock = new THREE.Clock()
 // // Raycaster - способ взаимодействия с объектом на сцене
 const raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
-let isDraggingKnot = false
+let isDragging = false
 let targetRotation = { x: 0, y: 0 }
 let displayRotation = { x: 0, y: 0 }
 
@@ -313,11 +344,11 @@ canvas.addEventListener('mousedown', (e) => {
   mouse.x = (e.clientX / window.innerWidth) * 2 - 1
   mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
   raycaster.setFromCamera(mouse, camera)
-  isDraggingKnot = raycaster.intersectObject(torusKnotMesh).length > 0
+  isDragging = raycaster.intersectObject(loadedBoulder).length > 0
 })
 
 canvas.addEventListener('mouseup', () => {
-  isDraggingKnot = false
+  isDragging = false
 })
 
 canvas.addEventListener('mousemove', (e) => {
@@ -325,9 +356,9 @@ canvas.addEventListener('mousemove', (e) => {
   mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
   raycaster.setFromCamera(mouse, camera)
 
-  controls.enabled = !isDraggingKnot
+  controls.enabled = !isDragging
 
-  if (isDraggingKnot && e.buttons === 1) {
+  if (isDragging && e.buttons === 1) {
     targetRotation.y += e.movementX * 0.01
     targetRotation.x += e.movementY * 0.01
   }
@@ -364,7 +395,8 @@ const animate = () => {
     targetRotation.y,
     0.1,
   )
-  torusKnotMesh.rotation.set(displayRotation.x, displayRotation.y, 0)
+  loadedBoulder &&
+    loadedBoulder.rotation.set(displayRotation.x, displayRotation.y, 0)
 }
 
 animate()
