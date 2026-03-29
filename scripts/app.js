@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { Pane } from 'tweakpane'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
-const devMode = true
+const devMode = false
 
 // // сцена
 const scene = new THREE.Scene()
@@ -180,12 +181,40 @@ scene.add(cubeCamera)
 standardMaterial.envMap = cubeRenderTarget.texture
 standardMaterial.envMapIntensity = 0.5
 
+// // работа с внешним объектом
+// загрузка модели
+const loader = new GLTFLoader()
+
+loader.load('../textures/boulder/boulder.glb', (gltf) => {
+  gltf.scene.traverse((node) => {
+    if (node.isMesh) {
+      node.material = boulderMaterial
+    }
+  })
+  scene.add(gltf.scene)
+})
+
+// загрузка текстур
+const textures = {
+  boulderAlbedo: textureLoader.load(
+    '../textures/boulder/sharp-boulder2-albedo.png',
+  ),
+}
+// инвертируем текстуру по оси Y
+textures.boulderAlbedo.flipY = false
+
+// настройка материала
+const boulderMaterial = new THREE.MeshStandardMaterial({
+  map: textures.boulderAlbedo,
+})
+
 // // группа объектов сцены
 const sceneGroup = new THREE.Group()
 // sceneGroup.add(cubeMesh, cubeMesh2, cubeMesh3)
 // sceneGroup.add(geometryMesh, cubeMesh2, cubeMesh3)
 // sceneGroup.add(geometryMesh, torusKnotMesh, cubeMesh3)
-sceneGroup.add(sphereMesh, torusKnotMesh, cubeMesh3)
+// sceneGroup.add(sphereMesh, torusKnotMesh, cubeMesh3)
+sceneGroup.add(torusKnotMesh, cubeMesh3)
 
 // // добавление группы на сцену
 scene.add(sceneGroup)
