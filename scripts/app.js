@@ -187,10 +187,12 @@ const loader = new GLTFLoader()
 
 let loadedBoulder = null
 
-loader.load('../textures/boulder/boulder.glb', (gltf) => {
+loader.load('../textures/boulder/boulder-textured.glb', (gltf) => {
   gltf.scene.traverse((node) => {
     if (node.isMesh) {
-      node.material = boulderMaterial
+      // node.material = boulderMaterial
+      node.material.roughness = 0.75
+      node.material.metalness = 0.15
       node.castShadow = true
       node.receiveShadow = true
       // node.scale.setScalar(0.9)
@@ -201,21 +203,21 @@ loader.load('../textures/boulder/boulder.glb', (gltf) => {
 })
 
 // загрузка текстур
-const textures = {
-  boulderAlbedo: textureLoader.load(
-    '../textures/boulder/sharp-boulder2-albedo.png',
-  ),
-  boulderNormal: textureLoader.load(
-    '../textures/boulder/sharp-boulder2-normal_ogl.png',
-  ),
-  boulderRoughness: textureLoader.load(
-    '../textures/boulder/sharp-boulder2-roughness.png',
-  ),
-  boulderMetalness: textureLoader.load(
-    '../textures/boulder/sharp-boulder2-metallic.png',
-  ),
-  boulderAO: textureLoader.load('../textures/boulder/sharp-boulder2-ao.png'),
-}
+// const textures = {
+//   boulderAlbedo: textureLoader.load(
+//     '../textures/boulder/sharp-boulder2-albedo.png',
+//   ),
+//   boulderNormal: textureLoader.load(
+//     '../textures/boulder/sharp-boulder2-normal_ogl.png',
+//   ),
+//   boulderRoughness: textureLoader.load(
+//     '../textures/boulder/sharp-boulder2-roughness.png',
+//   ),
+//   boulderMetalness: textureLoader.load(
+//     '../textures/boulder/sharp-boulder2-metallic.png',
+//   ),
+//   boulderAO: textureLoader.load('../textures/boulder/sharp-boulder2-ao.png'),
+// }
 // инвертируем текстуры по оси Y (в ручную)
 // textures.boulderAlbedo.flipY = false
 // textures.boulderNormal.flipY = false
@@ -224,20 +226,20 @@ const textures = {
 // textures.boulderAO.flipY = false
 
 // инвертируем все текстуры по оси Y (централизованно)
-Object.values(textures).forEach((texture) => {
-  texture.flipY = false
-})
+// Object.values(textures).forEach((texture) => {
+//   texture.flipY = false
+// })
 
 // настройка материала
-const boulderMaterial = new THREE.MeshStandardMaterial({
-  map: textures.boulderAlbedo,
-  normalMap: textures.boulderNormal,
-  roughnessMap: textures.boulderRoughness,
-  metalnessMap: textures.boulderMetalness,
-  aoMap: textures.boulderAO,
+// const boulderMaterial = new THREE.MeshStandardMaterial({
+//   map: textures.boulderAlbedo,
+//   normalMap: textures.boulderNormal,
+//   roughnessMap: textures.boulderRoughness,
+//   metalnessMap: textures.boulderMetalness,
+//   aoMap: textures.boulderAO,
 
-  roughness: 0.65,
-})
+//   roughness: 0.65,
+// })
 
 // // группа объектов сцены
 const sceneGroup = new THREE.Group()
@@ -245,10 +247,10 @@ const sceneGroup = new THREE.Group()
 // sceneGroup.add(geometryMesh, cubeMesh2, cubeMesh3)
 // sceneGroup.add(geometryMesh, torusKnotMesh, cubeMesh3)
 // sceneGroup.add(sphereMesh, torusKnotMesh, cubeMesh3)
-sceneGroup.add(torusKnotMesh, cubeMesh3)
+// sceneGroup.add(torusKnotMesh, cubeMesh3)
 
 // // добавление группы на сцену
-scene.add(sceneGroup)
+// scene.add(sceneGroup)
 
 // // поворот всей группы по оси "y" в градусах
 sceneGroup.rotation.y = THREE.MathUtils.degToRad(45)
@@ -259,11 +261,11 @@ scene.fog = fog
 
 // // освещение
 // AmbientLight - равномерно освещает объекты сцены, не создает теней и бликов, имитирует фоновое освещение
-const light = new THREE.AmbientLight('#fff', 0.15)
+const light = new THREE.AmbientLight('#fff', 0.25)
 scene.add(light)
 
 // PointLight - точечный исочник света, светит во все направления, создает тени и блики, имеет параметры затухания с расстоянием
-const pointLight = new THREE.PointLight('#fff', 2)
+const pointLight = new THREE.PointLight('#fff', 20)
 pointLight.position.set(1.8, 0.7, 0)
 // работа с тенями  (источник освещения)
 pointLight.castShadow = true
@@ -441,3 +443,5 @@ if (devMode) {
 } else {
   scene.remove(axesHelper, gridHelper, pointLightHelper)
 }
+
+
