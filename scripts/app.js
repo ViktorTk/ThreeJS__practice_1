@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { Pane } from 'tweakpane'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 
-const devMode = false
+const devMode = true
 
 // // сцена
 const scene = new THREE.Scene()
@@ -187,7 +187,7 @@ const loader = new GLTFLoader()
 
 let loadedBoulder = null
 
-loader.load('../textures/boulder/boulder-textured.glb', (gltf) => {
+loader.load('../textures/boulder/test.glb', (gltf) => {
   gltf.scene.traverse((node) => {
     if (node.isMesh) {
       // node.material = boulderMaterial
@@ -195,7 +195,7 @@ loader.load('../textures/boulder/boulder-textured.glb', (gltf) => {
       node.material.metalness = 0.15
       node.castShadow = true
       node.receiveShadow = true
-      // node.scale.setScalar(0.9)
+      node.scale.setScalar(0.5)
     }
   })
   loadedBoulder = gltf.scene
@@ -443,5 +443,3 @@ if (devMode) {
 } else {
   scene.remove(axesHelper, gridHelper, pointLightHelper)
 }
-
-
